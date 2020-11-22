@@ -15,13 +15,22 @@ export const createCache = () => {
 };
 
 // getToken from meta tags
-const getToken = () => document.querySelector('meta[name="csrf-token"]').getAttribute("content");
-const token = getToken();
+const getTokens = () => {
+  const tokens = {
+    "X-CSRF-Token": document
+      .querySelector('meta[name="csrf-token"]')
+      .getAttribute("content")
+  };
+
+  const authToken = localStorage.getItem("mlToken");
+  return authToken ? { ...tokens, Authorization: authToken } : tokens;
+};
+
 const setTokenForOperation = async (operation) =>
   operation.setContext({
     headers: {
-      "X-CSRF-Token": token,
-    },
+      ...getTokens()
+    }
   });
 // link with token
 const createLinkWithToken = () =>
@@ -35,7 +44,7 @@ const createLinkWithToken = () =>
             handle = forward(operation).subscribe({
               next: observer.next.bind(observer),
               error: observer.error.bind(observer),
-              complete: observer.complete.bind(observer),
+              complete: observer.complete.bind(observer)
             });
           })
           .catch(observer.error.bind(observer));
@@ -55,7 +64,7 @@ const createErrorLink = () =>
       logError("GraphQL - Error", {
         errors: graphQLErrors,
         operationName: operation.operationName,
-        variables: operation.variables,
+        variables: operation.variables
       });
     }
     if (networkError) {
@@ -67,12 +76,16 @@ const createErrorLink = () =>
 const createHttpLink = () =>
   new HttpLink({
     uri: "/graphql",
-    credentials: "include",
+    credentials: "include"
   });
 
 export const createClient = (cache, requestLink) => {
   return new ApolloClient({
-    link: ApolloLink.from([createErrorLink(), createLinkWithToken(), createHttpLink()]),
-    cache,
+    link: ApolloLink.from([
+      createErrorLink(),
+      createLinkWithToken(),
+      createHttpLink()
+    ]),
+    cache
   });
 };

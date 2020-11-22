@@ -20,10 +20,10 @@ export default () => (
       <div>
         {loading
           ? "loading..."
-          : data.items.map((item) => (
-              <div key={item.id}>
-                <strong>{item.title}</strong>
-                {item.user ? `added by ${item.user.email}` : null}
+          : data.items.map(({ title, id, user }) => (
+              <div key={id}>
+                <strong>{title}</strong>
+                {user ? `added by ${user.email}` : null}
               </div>
             ))}
       </div>

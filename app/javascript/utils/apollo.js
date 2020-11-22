@@ -47,6 +47,7 @@ const createLinkWithToken = () =>
 
 // log erors
 const logError = (error) => console.error(error);
+
 // create error link
 const createErrorLink = () =>
   onError(({ graphQLErrors, networkError, operation }) => {

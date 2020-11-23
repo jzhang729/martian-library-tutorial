@@ -10,7 +10,7 @@ module Types
     
     field :me, Types::UserType, null: true
 
-    def items
+    def items      
       Item.preload(:user)
     end
 

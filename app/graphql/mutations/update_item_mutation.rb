@@ -1,5 +1,5 @@
 module Mutations
-  class UpdateItemMutation < Mutation::BaseMutation
+  class UpdateItemMutation < Mutations::BaseMutation
     argument :id, ID, required: true
     argument :title, String, required: true
     argument :description, String, required: false

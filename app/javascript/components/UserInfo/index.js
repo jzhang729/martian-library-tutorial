@@ -8,7 +8,7 @@ const UserInfo = () => {
   return (
     <Query query={Me}>
       {({ data, loading }) => {
-        if (loading) return "...loading";
+        if (loading || !data) return "...loading";
         if (!data.me) {
           return <LoginForm />;
         }

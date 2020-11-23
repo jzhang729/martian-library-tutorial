@@ -1,32 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import { Query } from "react-apollo";
-import gql from "graphql-tag";
+import { LibraryQuery } from "./operations.graphql";
+import cs from "./styles";
+import UpdateItemForm from "../UpdateItemForm";
 
-const LibraryQuery = gql`
-  {
-    items {
-      id
-      title
-      user {
-        email
-      }
-    }
-  }
-`;
+const Library = () => {
+  const [item, setItem] = useState(null);
 
-export default () => (
-  <Query query={LibraryQuery}>
-    {({ data, loading }) => (
-      <div>
-        {loading
-          ? "loading..."
-          : data.items.map(({ title, id, user }) => (
-              <div key={id}>
-                <strong>{title}</strong>
-                {user ? `added by ${user.email}` : null}
-              </div>
-            ))}
-      </div>
-    )}
-  </Query>
-);
+  const renderItems = (items) => {
+    return items.map(({ title, description, imageUrl, id, user }) => {
+      return (
+        <button
+          key={id}
+          className={cs.plate}
+          onClick={() =>
+            setItem({
+              title,
+              imageUrl,
+              id,
+              description
+            })
+          }
+        >
+          <div className={cs.title}>{title}</div>
+          <div>{description}</div>
+          {imageUrl && <img src={imageUrl} className={cs.image} />}
+          {user ? <div className={cs.user}>added by {user.email}</div> : null}
+        </button>
+      );
+    });
+  };
+
+  return (
+    <Query query={LibraryQuery}>
+      {({ data, loading }) => {
+        if (loading) return "Loading...";
+
+        return (
+          <div className={cs.library}>
+            {renderItems(data.items)}
+            {item !== null && (
+              <UpdateItemForm
+                id={item.id}
+                initialTitle={item.title}
+                initialDescription={item.description}
+                initialImageUrl={item.imageUrl}
+                onClose={() => setItem(null)}
+              />
+            )}
+          </div>
+        );
+      }}
+    </Query>
+  );
+};
+
+export default Library;

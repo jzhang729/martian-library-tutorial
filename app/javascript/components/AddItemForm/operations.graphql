@@ -3,16 +3,22 @@ mutation AddItemMutation(
   $description: String
   $imageUrl: String
 ) {
-  addItem(title: $title, description: $description, imageUrl: $imageUrl) {
+  addItem(
+    attributes: {
+      title: $title
+      description: $description
+      imageUrl: $imageUrl
+    }
+  ) {
     item {
-      id
-      title
-      description
-      imageUrl
+      ...ItemFragment
       user {
         id
         email
       }
+    }
+    errors {
+      fullMessages
     }
   }
 }

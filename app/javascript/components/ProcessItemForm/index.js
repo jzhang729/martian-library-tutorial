@@ -7,13 +7,19 @@ const ProcessItemForm = ({
   initialImageUrl = "",
   onProcessItem,
   buttonText,
-  loading
+  loading,
+  errors
 }) => {
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
   return (
     <div className={cs.form}>
+      {errors && (
+        <div className={cs.errors}>
+          <div className="errors">{errors.fullMessages.join("; ")}</div>
+        </div>
+      )}
       <input
         type="text"
         placeholder="title"
@@ -28,7 +34,6 @@ const ProcessItemForm = ({
         className={cs.input}
         onChange={(e) => setDescription(e.currentTarget.value)}
       />
-
       <input
         type="text"
         placeholder="url"

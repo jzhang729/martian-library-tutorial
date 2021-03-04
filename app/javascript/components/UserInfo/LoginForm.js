@@ -16,7 +16,7 @@ const LoginForm = () => {
         });
       }}
     >
-      {(signIn, { loading: authenticating }) =>
+      {(signIn, { loading: authenticating, error }) =>
         authenticating ? (
           "..."
         ) : (
@@ -45,6 +45,7 @@ const LoginForm = () => {
               placeholder="your email"
             />
             <input type="submit" value="Sign In" />
+            {error && <span>{error.message}</span>}
           </form>
         )
       }

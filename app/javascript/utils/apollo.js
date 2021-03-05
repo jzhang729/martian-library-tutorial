@@ -63,7 +63,6 @@ const logError = (error) => console.error(error);
 const createErrorLink = () =>
   onError(({ graphQLErrors, networkError, operation }) => {
     if (graphQLErrors) {
-      console.log(graphQLErrors);
       logError("GraphQL - Error", {
         errors: graphQLErrors,
         operationName: operation.operationName,

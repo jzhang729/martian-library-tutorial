@@ -1,3 +1,5 @@
+#import '../../fragments/Item.graphql'
+
 mutation AddItemMutation(
   $title: String!
   $description: String

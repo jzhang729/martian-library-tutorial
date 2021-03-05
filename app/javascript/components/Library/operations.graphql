@@ -1,5 +1,4 @@
-#app/javascript/components/Library/operations.graphql
-# import '../../fragments/Item.graphql'
+#import '../../fragments/Item.graphql'
 
 query LibraryQuery {
   items {

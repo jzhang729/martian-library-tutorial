@@ -1,3 +1,5 @@
+import ActionCable from "actioncable";
+import ActionCableLink from "graphql-ruby-client/subscriptions/ActionCableLink";
 import { ApolloClient } from "apollo-client";
 // cache
 import { InMemoryCache } from "apollo-cache-inmemory";
@@ -61,6 +63,7 @@ const logError = (error) => console.error(error);
 const createErrorLink = () =>
   onError(({ graphQLErrors, networkError, operation }) => {
     if (graphQLErrors) {
+      console.log(graphQLErrors);
       logError("GraphQL - Error", {
         errors: graphQLErrors,
         operationName: operation.operationName,
@@ -79,12 +82,35 @@ const createHttpLink = () =>
     credentials: "include"
   });
 
+const getCableUrl = () => {
+  const protocol = window.location.protocol === "http" ? "wss" : "ws";
+  const host = window.location.hostname;
+  const port = process.env.CABLE_PORT || "3000";
+  const authToken = localStorage.getItem("mlToken");
+  return `${protocol}//${host}:${port}/cable?token=${authToken}`;
+};
+
+const createActionCableLink = () => {
+  const cable = ActionCable.createConsumer(getCableUrl());
+  return new ActionCableLink({ cable });
+};
+
+const hasSubscriptionOperation = ({ query: { definitions } }) =>
+  definitions.some(
+    ({ kind, operation }) =>
+      kind === "OperationDefinition" && operation === "subscription"
+  );
+
 export const createClient = (cache, requestLink) => {
   return new ApolloClient({
     link: ApolloLink.from([
       createErrorLink(),
       createLinkWithToken(),
-      createHttpLink()
+      ApolloLink.split(
+        hasSubscriptionOperation,
+        createActionCableLink(),
+        createHttpLink()
+      )
     ]),
     cache
   });
